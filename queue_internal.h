@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <queue.h>
+#include "queue.h"
 
 /**
  * ATTENTION:
@@ -56,7 +56,7 @@ int8_t queue_unlock_internal(queue_t *q);
   *
   * returns < 0 => error, 0 okay
   */
-int8_t queue_put_internal(queue_t *q, void *el, int (*action)(pthread_cond_t *, pthread_mutex_t *));
+int8_t queue_put_internal(queue_t *q, void *el);
 
 /**
   * gets the first element in the queue.
@@ -71,7 +71,7 @@ int8_t queue_put_internal(queue_t *q, void *el, int (*action)(pthread_cond_t *, 
   *
   * returns < 0 => error, 0 okay
   */
-int8_t queue_get_internal(queue_t *q, void **e, int (*action)(pthread_cond_t *, pthread_mutex_t *), int (*cmp)(void *, void *), void *cmpel);
+int8_t queue_get_internal(queue_t *q, void **e, int (*cmp)(void *, void *), void *cmpel);
 
 /**
   * destroys a queue.

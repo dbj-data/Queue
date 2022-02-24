@@ -32,8 +32,6 @@
 #endif
 #include <errno.h> /* EBUSY */
 
-#include <pthread.h> /* pthread_mutex_t, pthread_cond_t */
-
 #ifdef _WIN32
 #define sleepmilli(x) Sleep(x)
 #else
@@ -91,10 +89,6 @@ typedef struct queue_s {
 	int8_t sort;
 	int8_t asc_order;
 	int (*cmp_el)(void *, void *);
-	// multithreaded
-	pthread_mutex_t *mutex;
-	pthread_cond_t *cond_get;
-	pthread_cond_t *cond_put;
 } queue_t;
 
 /**

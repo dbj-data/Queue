@@ -25,33 +25,6 @@
 queue_t *queue_create(void) {
 	queue_t *q = (queue_t *)malloc(sizeof(queue_t));
 	if(q != NULL) {
-		q->mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-		if(q->mutex == NULL) {
-			free(q);
-			return NULL;
-		}
-		pthread_mutex_init(q->mutex, NULL);
-		
-		q->cond_get = (pthread_cond_t *)malloc(sizeof(pthread_cond_t));
-		if(q->cond_get == NULL) {
-			pthread_mutex_destroy(q->mutex);
-			free(q->mutex);
-			free(q);
-			return NULL;
-		}
-		pthread_cond_init(q->cond_get, NULL);
-
-		q->cond_put = (pthread_cond_t *)malloc(sizeof(pthread_cond_t));
-		if(q->cond_put == NULL) {
-			pthread_cond_destroy(q->cond_get);
-			free(q->cond_get);
-			pthread_mutex_destroy(q->mutex);
-			free(q->mutex);
-			free(q);
-			return NULL;
-		}
-		pthread_cond_init(q->cond_put, NULL);
-		
 		q->first_el = NULL;
 		q->last_el = NULL;
 		q->num_els = 0;
@@ -180,12 +153,6 @@ int8_t queue_set_new_data(queue_t *q, uint8_t v) {
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
 
-	if(q->new_data == 0) {
-		// notify waiting threads, when new data isn't accepted
-		pthread_cond_broadcast(q->cond_get);
-		pthread_cond_broadcast(q->cond_put);
-	}
-
 	return Q_OK;
 }
 
@@ -208,7 +175,7 @@ int8_t queue_put(queue_t *q, void *el) {
 	if (0 != queue_lock_internal(q))
 		return Q_ERR_LOCK;
 	
-	int8_t r = queue_put_internal(q, el, NULL);
+	int8_t r = queue_put_internal(q, el );
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -221,7 +188,7 @@ int8_t queue_put_wait(queue_t *q, void *el) {
 	if (0 != queue_lock_internal(q))
 		return Q_ERR_LOCK;
 	
-	int8_t r = queue_put_internal(q, el, pthread_cond_wait);
+	int8_t r = queue_put_internal(q, el );
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -235,7 +202,7 @@ int8_t queue_get(queue_t *q, void **e) {
 	if (0 != queue_lock_internal(q))
 		return Q_ERR_LOCK;
 	
-	int8_t r = queue_get_internal(q, e, NULL, NULL, NULL);
+	int8_t r = queue_get_internal(q, e, NULL, NULL);
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -249,7 +216,7 @@ int8_t queue_get_wait(queue_t *q, void **e) {
 	if (0 != queue_lock_internal(q))
 		return Q_ERR_LOCK;
 	
-	int8_t r = queue_get_internal(q, e, pthread_cond_wait, NULL, NULL);
+	int8_t r = queue_get_internal(q, e, NULL, NULL);
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -263,7 +230,7 @@ int8_t queue_get_filtered(queue_t *q, void **e, int (*cmp)(void *, void *), void
 	if (0 != queue_lock_internal(q))
 		return Q_ERR_LOCK;
 	
-	int8_t r = queue_get_internal(q, e, NULL, cmp, cmpel);
+	int8_t r = queue_get_internal(q, e, NULL, cmpel);
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -277,7 +244,7 @@ int8_t queue_flush_put(queue_t *q, void (*ff)(void *), void *e) {
 		return Q_ERR_LOCK;
 	
 	int8_t r = queue_flush_internal(q, 0, NULL);
-	r = queue_put_internal(q, e, NULL);
+	r = queue_put_internal(q, e );
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
@@ -291,7 +258,7 @@ int8_t queue_flush_complete_put(queue_t *q, void (*ff)(void *), void *e) {
 		return Q_ERR_LOCK;
 	
 	int8_t r = queue_flush_internal(q, 1, ff);
-	r = queue_put_internal(q, e, NULL);
+	r = queue_put_internal(q, e );
 
 	if (0 != queue_unlock_internal(q))
 		return Q_ERR_LOCK;
