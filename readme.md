@@ -5,6 +5,8 @@ Branch (dbj_queue)
 
 - made Visual Studio project
 - mtr_queue == multi thread resilient queue
+- dependency on `pthreads.h` has been removed
+  - win32 critical section used instead
 - divided into lib and example app
    - win32 app
    - using dbjsysloglib
