@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "dbj_dbg_print.h"
+
 typedef struct {
   char *test;
 } test;
@@ -74,16 +76,16 @@ void sorted_mode() {
 
   int *t;
   queue_get(q, (void **)&t);
-  printf("first int %i\n", *t);
+  DBJ_DBG_PRINT("first int %i\n", *t);
   free(t);
   queue_get(q, (void **)&t);
-  printf("second int %i\n", *t);
+  DBJ_DBG_PRINT("second int %i\n", *t);
   free(t);
   queue_get(q, (void **)&t);
-  printf("third int %i\n", *t);
+  DBJ_DBG_PRINT("third int %i\n", *t);
   free(t);
   queue_get(q, (void **)&t);
-  printf("fourth int %i\n", *t);
+  DBJ_DBG_PRINT("fourth int %i\n", *t);
   free(t);
 
   queue_destroy_complete(q, NULL);
@@ -106,15 +108,15 @@ void sorted2_mode() {
 
   int *i;
   queue_get(q, (void **)&i);
-  printf("first element was %d\n", *i);
+  DBJ_DBG_PRINT("first element was %d\n", *i);
   queue_get(q, (void **)&i);
-  printf("second element was %d\n", *i);
+  DBJ_DBG_PRINT("second element was %d\n", *i);
   queue_get(q, (void **)&i);
-  printf("third element was %d\n", *i);
+  DBJ_DBG_PRINT("third element was %d\n", *i);
   queue_get(q, (void **)&i);
-  printf("fourth element was %p\n", i);
+  DBJ_DBG_PRINT("fourth element was %p\n", i);
   queue_get(q, (void **)&i);
-  printf("fifth element was %p\n", i);
+  DBJ_DBG_PRINT("fifth element was %p\n", i);
 
   queue_destroy_complete(q, NULL);
 }

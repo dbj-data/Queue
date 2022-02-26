@@ -27,6 +27,9 @@
       <Project>{6146bc8a-5504-4a99-a2a2-ebf6c6b0db6a}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dbj_dbg_print.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
